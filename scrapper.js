@@ -8,8 +8,8 @@ const path = require('path');
     let viewedPages = [];
 
     async function getHtml(url) {
-        console.log('Load page ' + url);
-        await page.goto(url);
+        console.log('Load page №' + (viewedPages.length + 1) + ' ' + url);
+        await page.goto(url, { waitUntil: "networkidle0" });
         let content = await page.content();
         saveHtml(url, content);
         viewedPages.push(url);
@@ -29,7 +29,11 @@ const path = require('path');
 
         for (let link of links) {
             if(!viewedPages.includes(link)) {
-                await getHtml(link);
+                try{
+                    await getHtml(link);
+                }catch (e) {
+                    console.log(e)
+                }
             }
         }
     }
