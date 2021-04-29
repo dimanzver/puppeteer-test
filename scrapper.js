@@ -7,12 +7,13 @@ const path = require('path');
     const page = await browser.newPage();
     let viewedPages = [];
 
-    async function getHtml(url) {
+    async function getHtml(url, recursive = true) {
         console.log('Load page №' + (viewedPages.length + 1) + ' ' + url);
         await page.goto(url, { waitUntil: "networkidle0" });
         let content = await page.content();
         saveHtml(url, content);
         viewedPages.push(url);
+        if(!recursive) return;
 
         // process links
         let links = await page.evaluate(() => {
@@ -38,7 +39,13 @@ const path = require('path');
         }
     }
 
-    await getHtml('https://new.lsboutique.ru/');
+    let args = process.argv.slice(2);
+    if(args.length > 0 && args[0].match(/^--url=/)) {
+        let url = args[0].replace('--url=', '');
+        await getHtml(url, false);
+    }else{
+        await getHtml('https://new.lsboutique.ru/');
+    }
 
     await browser.close();
 })();
