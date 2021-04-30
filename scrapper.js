@@ -5,6 +5,15 @@ const path = require('path');
 (async () => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+        if(req.resourceType() === 'image'){
+            req.abort();
+        }
+        else {
+            req.continue();
+        }
+    });
     let viewedPages = [];
 
     async function getHtml(url, recursive = true) {
