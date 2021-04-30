@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
-const path = require('path');
+const urlUtil = require('url');
 
 (async () => {
     const browser = await puppeteer.launch();
@@ -65,7 +65,7 @@ const path = require('path');
 
 function saveHtml(url, content) {
     url = url.replace('https://new.lsboutique.ru', '');
-    let dir = './dist' + path.parse(url + '/index.html').dir;
+    let dir = './dist' + urlUtil.parse(url).pathname;
     if(!fs.existsSync(dir))
         fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(dir + '/index.html', content);
